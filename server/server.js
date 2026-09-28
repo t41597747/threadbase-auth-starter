@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import threadsRouter from "./routes/threads.js";
+import verifyToken from "./middleware/verifyToken.js";
 import authRouter from "./routes/auth.js";
 import prisma from "./prisma/client.js";
 
@@ -13,10 +14,10 @@ app.use("/auth", authRouter);          // provided scaffold — issues tokens
 app.use("/api/threads", threadsRouter);
 
 // -------------------------------------------------------------
-//  TODO (assignment): add a protected route here
-//      GET /api/me  ->  returns req.user
-//  Apply your verifyToken middleware to it.
-// -------------------------------------------------------------
+// Protected identity route
+app.get("/api/me", verifyToken, (req, res) => {
+  res.json(req.user);
+});
 
 // Global error handler (4 arguments).
 app.use((err, req, res, next) => {
@@ -39,3 +40,5 @@ start().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+
